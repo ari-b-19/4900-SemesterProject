@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.metalexplorer"
+    namespace = "com.metalexplorer"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.metalexplorer"
+        applicationId = "com.metalexplorer"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
