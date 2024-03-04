@@ -43,3 +43,4 @@ replay_pid*
 .cxx
 local.properties
 /.gitignore.bak
+/app/.gitignore
