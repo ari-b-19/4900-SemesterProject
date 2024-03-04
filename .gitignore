@@ -23,9 +23,11 @@
 hs_err_pid*
 replay_pid*
 
-
+*.kts
+*.pro
 *.iml
 .gradle
+/.idea
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -35,7 +37,9 @@ replay_pid*
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+/app/build
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+/.gitignore.bak
