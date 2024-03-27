@@ -7,37 +7,34 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import com.metalexplorer.databinding.FragmentSavedBinding;
 
-import com.metalexplorer.databinding.FragmentHomeBinding;
+public class SavedFragment extends Fragment {
 
-public class HomeFragment extends Fragment {
+    private FragmentSavedBinding binding;
 
-    private FragmentHomeBinding binding;
 
+
+    //   private List<String> itemList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-
-
+        binding = FragmentSavedBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
 
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        binding.buttonFirst.setOnClickListener(new View.OnClickListener() {
+//        binding.buttonSecond.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                NavHostFragment.findNavController(HomeFragment.this)
-//                        .navigate(R.id.action_FirstFragment_to_SecondFragment);
+//                NavHostFragment.findNavController(SearchFragment.this)
+//                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
 //            }
 //        });
     }
-
-
 
     @Override
     public void onDestroyView() {

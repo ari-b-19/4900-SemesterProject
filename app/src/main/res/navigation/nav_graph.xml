@@ -11,18 +11,34 @@
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_home">
 
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SearchFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/SearchFragment"
         android:name="com.metalexplorer.SearchFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_search">
+<!--        <action-->
+<!--            android:id="@+id/action_SearchFragment_to_BandProfileFragment"-->
+<!--            app:destination="@id/BandProfileFragment" />-->
+    </fragment>
 
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/HomeFragment" />
+    <fragment
+        android:id="@+id/SavedFragment"
+        android:name="com.metalexplorer.SavedFragment"
+        tools:layout="@layout/fragment_saved">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/BandProfileFragment"
+        android:name="com.metalexplorer.SavedFragment"
+        tools:layout="@layout/fragment_band_profile">
+
+<!--        <action-->
+<!--            android:id="@+id/action_BandProfileFragment_to_SearchFragment"-->
+<!--            app:popUpTo="@id/SearchFragment"-->
+<!--            app:popUpToInclusive="true" />-->
+
     </fragment>
 </navigation>
