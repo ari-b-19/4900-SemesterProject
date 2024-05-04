@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.loki.afro.metallum.entity.Band;
+import com.github.loki.afro.metallum.entity.Disc;
 
 import java.util.List;
 
@@ -15,10 +16,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private final RecyclerViewInterface recyclerViewInterface;
     private List<Band> bandData; //
 
+    private RecyclerView recyclerView;
+
     // Constructor to initialize the data and inflater
-    public RecyclerViewAdapter(List<Band> data, RecyclerViewInterface recyclerViewInterface) {
+    public RecyclerViewAdapter(List<Band> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView) {
         this.bandData = data;
         this.recyclerViewInterface = recyclerViewInterface;
+        this.recyclerView = recyclerView;
     }
 
     @NonNull
@@ -31,6 +35,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     // Bind data to the views inside each item
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+//        Band item = bandData.get(position);
+//        String  =
         holder.textView.setText(bandData.get(position).getName());
         holder.textView2.setText(bandData.get(position).getGenre());
 //        SearchBandResult band = mData.get(position);
@@ -63,7 +69,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     if (recyclerViewInterface != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            recyclerViewInterface.OnItemClick(position);
+                            recyclerViewInterface.OnItemClick(position, recyclerView);
 
                         }
                     }
