@@ -1,7 +1,6 @@
 package com.metalexplorer;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,27 +9,34 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.loki.afro.metallum.entity.Disc;
-import com.metalexplorer.databinding.FragmentHomeBinding;
+import com.github.loki.afro.metallum.entity.Track;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
 public class HomeFragment extends Fragment implements RecyclerViewInterface {
-
-    private FragmentHomeBinding binding;
+    
 
     private RecyclerView recyclerView;
 
     private HomeScreenRecyclerViewAdapter homeScreenRecyclerViewAdapter;
+
+    private TextView fetchText;
+
+    private ProgressBar progressBar;
 
     private View view;
 
@@ -50,18 +56,24 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         dataViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
 
+        fetchText = view.findViewById(R.id.fetching);
+        progressBar = view.findViewById(R.id.progressBarHome);
+
         recyclerView = view.findViewById(R.id.todaysReleases);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-
+        fetchText.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
         homeScreenRecyclerViewAdapter = new HomeScreenRecyclerViewAdapter(todaysReleases, this, recyclerView);
         recyclerView.setAdapter(homeScreenRecyclerViewAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         dataViewModel.getDataList().observe(getViewLifecycleOwner(), data -> {
             // Update RecyclerView with new data
            homeScreenRecyclerViewAdapter.setData(data);
+           recyclerView.setVisibility(View.VISIBLE);
         });
+
 
 
         return view;
@@ -83,6 +95,36 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     @Override
     public void OnItemClick(int position, RecyclerView recyclerView) {
+        AlbumDetailsFragment albumDetailsFragment = new AlbumDetailsFragment();
+        Bundle bundle = new Bundle();
 
+        List<Track> trackList = new ArrayList<>(todaysReleases.get(position).getTrackList());
+
+        ParcelableTracklist parcelableTracklist = new ParcelableTracklist(trackList);
+
+        bundle.putParcelable("TRACKS", parcelableTracklist);
+
+        bundle.putString("ALBUM_NAME", todaysReleases.get(position).getName());
+        bundle.putLong("ALBUM", todaysReleases.get(position).getId());
+
+
+        Optional<byte[]> optionalPhoto = todaysReleases.get(position).getArtwork();
+
+        if (optionalPhoto.isPresent()) {
+            byte[] photoBytes = optionalPhoto.get();
+            bundle.putByteArray("ALBUM_ART", photoBytes);
+        } else {
+            bundle.putByteArray("ALBUM_ART", (byte[]) null);
+        }
+
+        albumDetailsFragment.setArguments(bundle);
+
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, albumDetailsFragment);
+        fragmentTransaction.setReorderingAllowed(true);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
+
 }

@@ -45,11 +45,11 @@ public class HomeScreenRecyclerViewAdapter extends RecyclerView.Adapter<HomeScre
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Band band = API.getBandById(discData.get(position).getBand().getId());
-        String forFansOf = "For fans of: " + band.getSimilarArtists();
+//        String forFansOf = "For fans of: " + band.getSimilarArtists();
         setupAlbumArt(holder, position);
         holder.band.setText(band.getName());
         holder.genre.setText(band.getGenre());
-        holder.similarArtists.setText(forFansOf);
+//        holder.similarArtists.setText(forFansOf);
 //        }
     }
 
@@ -89,7 +89,7 @@ public class HomeScreenRecyclerViewAdapter extends RecyclerView.Adapter<HomeScre
 
         TextView genre;
 
-        TextView similarArtists;
+//        TextView similarArtists;
 
         ImageView albumArt;
 
@@ -97,7 +97,7 @@ public class HomeScreenRecyclerViewAdapter extends RecyclerView.Adapter<HomeScre
             super(itemView);
             band = itemView.findViewById(R.id.Band);
             genre = itemView.findViewById(R.id.Genre);
-            similarArtists = itemView.findViewById(R.id.similarArtists);
+//            similarArtists = itemView.findViewById(R.id.similarArtists);
             albumArt = itemView.findViewById(R.id.AlbumArt);
 
 

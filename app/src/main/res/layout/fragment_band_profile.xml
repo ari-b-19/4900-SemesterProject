@@ -64,11 +64,35 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/Links"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Lineup" />
+
+    <TextView
+        android:id="@+id/Links"
+        android:layout_width="148dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:text="Links"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/linksRecyclerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lineupRecyclerView" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/linksRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Links" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,30 +30,40 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class BandProfileFragment extends Fragment implements RecyclerViewInterface {
-
+public class MemberFragment extends Fragment implements RecyclerViewInterface {
     private ArrayList<SearchDiscResult> itemList = new ArrayList<>();
 
     private ArrayList<Band.PartialMember> memberList = new ArrayList<>();
+
+    private TextView memberName;
 
     private ArrayList<Link> links = new ArrayList<>();
 
     private View view;
 
-    private ImageView bandImageView;
+    private ImageView photoImageView;
     private ExecutorService executorService = Executors.newCachedThreadPool();
+
+    private Disc disc;
+
+    private int width;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_band_profile, container, false);
+        view = inflater.inflate(R.layout.fragment_member, container, false);
 
-        bandImageView = view.findViewById(R.id.imageView);
+        photoImageView = view.findViewById(R.id.memberPhoto);
+        memberName = view.findViewById(R.id.MemberHeader);
 
-        setupBandImage();
-        setupAlbumRecyclerView();
-        setupLineupRecyclerView();
-        setupLinksRecyclerView();
+//        tracks.setText(requireArguments().getStringArrayList("TRACKS").toString());
+
+        memberName.setText(requireArguments().getString("MEMBER_NAME"));
+
+        setupMemberImage();
+//        setupAlbumRecyclerView();
+//        setupLineupRecyclerView();
+//        setupLinksRecyclerView();
 
 
         return view;
@@ -64,45 +75,45 @@ public class BandProfileFragment extends Fragment implements RecyclerViewInterfa
         Log.d("BandProfileFragment", "onCreate() called");
     }
 
-    public void setupBandImage() {
-        byte[] photoBytes = getArguments().getByteArray("IMAGE");
+    public void setupMemberImage() {
+        byte[] photoBytes = getArguments().getByteArray("MEMBER_PHOTO");
 
         if (photoBytes != null) {
             // Convert the byte array to a Bitmap
             Bitmap bitmap = BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length);
-            int newWidth = 385;
-            int newHeight = 80;
+            int newWidth = photoImageView.getWidth();
+            int newHeight = 235;
             Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
 
-            bandImageView.setImageBitmap(scaledBitmap);
+            photoImageView.setImageBitmap(scaledBitmap);
         } else {
-            bandImageView.setImageResource(R.drawable.default_band_image);
+            photoImageView.setImageResource(R.drawable.default_band_image);
         }
     }
 
     public void setupAlbumRecyclerView() {
         executorService.execute(() -> {
-        if (!itemList.isEmpty()) {
-            itemList.clear();
-        }
-        RecyclerView recyclerView = view.findViewById(R.id.albumRecyclerView);
-        recyclerView.setHasFixedSize(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.setNestedScrollingEnabled(false);
-
-        AlbumRecyclerViewAdapter itemAdapter = new AlbumRecyclerViewAdapter(itemList, this, recyclerView);
-        recyclerView.setAdapter(itemAdapter);
-
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            ParcelableDisc parcelableDiscList = bundle.getParcelable("DISCOGRAPHY");
-
-            if (parcelableDiscList != null) {
-                List<SearchDiscResult> discs = parcelableDiscList.getUserList();
-
-                itemList.addAll(discs);
-
+            if (!itemList.isEmpty()) {
+                itemList.clear();
             }
+            RecyclerView recyclerView = view.findViewById(R.id.albumRecyclerView);
+            recyclerView.setHasFixedSize(false);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+            recyclerView.setNestedScrollingEnabled(false);
+
+            AlbumRecyclerViewAdapter itemAdapter = new AlbumRecyclerViewAdapter(itemList, this, recyclerView);
+            recyclerView.setAdapter(itemAdapter);
+
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                ParcelableDisc parcelableDiscList = bundle.getParcelable("DISCOGRAPHY");
+
+                if (parcelableDiscList != null) {
+                    List<SearchDiscResult> discs = parcelableDiscList.getUserList();
+
+                    itemList.addAll(discs);
+
+                }
             }
         });
     }
@@ -160,7 +171,7 @@ public class BandProfileFragment extends Fragment implements RecyclerViewInterfa
         if (recyclerView == view.findViewById(R.id.albumRecyclerView)) {
             AlbumDetailsFragment albumDetailsFragment = new AlbumDetailsFragment();
             Bundle bundle = new Bundle();
-            Disc disc = API.getDiscById(itemList.get(position).getId());
+            disc = API.getDiscById(itemList.get(position).getId());
 
             List<Track> trackList = new ArrayList<>(disc.getTrackList());
 

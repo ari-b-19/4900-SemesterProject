@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
-    private LocalDate today;
+    private final LocalDate today = LocalDate.now();
 
     private ArrayList<Disc> todaysReleases = new ArrayList<>();
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
 //        fetchRecentReleases();
-        today = LocalDate.of(2024, 5, 15);
+
 
 
 
@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
     private void fetchRecentReleases() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080")
+//                .baseUrl("http://192.168.50.84:8080")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

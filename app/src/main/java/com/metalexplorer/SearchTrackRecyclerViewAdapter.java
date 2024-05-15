@@ -10,38 +10,34 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.loki.afro.metallum.entity.Track;
+import com.github.loki.afro.metallum.search.query.entity.SearchTrackResult;
 
 import java.util.ArrayList;
 
-public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecyclerViewAdapter.ViewHolder> {
-    private ArrayList<Track> trackData;
+public class SearchTrackRecyclerViewAdapter extends RecyclerView.Adapter<SearchTrackRecyclerViewAdapter.ViewHolder> {
+    private ArrayList<SearchTrackResult> trackData;
 
     private final RecyclerViewInterface recyclerViewInterface;
 
     private RecyclerView recyclerView;
-    public TrackRecyclerViewAdapter(ArrayList<Track> data, RecyclerViewInterface recyclerViewInterface) {
+    public SearchTrackRecyclerViewAdapter(ArrayList<SearchTrackResult> data, RecyclerViewInterface recyclerViewInterface) {
         this.trackData = data;
         this.recyclerViewInterface = recyclerViewInterface;
     }
 
     @NonNull
     @Override
-    public TrackRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.tracks_layout, parent, false);
-        return new TrackRecyclerViewAdapter.ViewHolder(view, recyclerViewInterface);
+    public SearchTrackRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_tracks_layout, parent, false);
+        return new SearchTrackRecyclerViewAdapter.ViewHolder(view, recyclerViewInterface);
     }
 
     @Override
-    public void onBindViewHolder(TrackRecyclerViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(SearchTrackRecyclerViewAdapter.ViewHolder holder, int position) {
 //        Track item = trackData.get(position);
-        int trackNumber = trackData.get(position).getTrackNumber();
-        String trackName = trackNumber + ". " + trackData.get(position).toString().split("name=")[1].split("\\)")[0];
-        if (!trackData.get(position).isInstrumental()) {
-        holder.myTextView.setText(trackName);
-        holder.myTextView.setPaintFlags(holder.myTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        } else {
-            holder.myTextView.setText(trackName);
-        }
+        holder.track.setText(trackData.get(position).getName());
+        holder.trackBand.setText(trackData.get(position).getBandName());
+
 
 
     }
@@ -52,11 +48,13 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView myTextView;
+        TextView track;
+        TextView trackBand;
 
         ViewHolder(View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.textview7);
+            track = itemView.findViewById(R.id.track);
+            trackBand = itemView.findViewById(R.id.trackBand);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

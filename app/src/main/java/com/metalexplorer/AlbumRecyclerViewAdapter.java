@@ -10,14 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.loki.afro.metallum.entity.Disc;
+import com.github.loki.afro.metallum.search.API;
+import com.github.loki.afro.metallum.search.query.entity.SearchDiscResult;
 
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 
 public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Disc> discData;
+    private ArrayList<SearchDiscResult> discData;
     private LayoutInflater mInflater;
 
     private final RecyclerViewInterface recyclerViewInterface;
@@ -28,13 +31,13 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
     private Boolean flag = false;
 
-    public AlbumRecyclerViewAdapter(ArrayList<Disc> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView) {
+    public AlbumRecyclerViewAdapter(ArrayList<SearchDiscResult> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView) {
         this.discData = data;
         this.recyclerViewInterface = recyclerViewInterface;
         this.recyclerView = recyclerView;
     }
 
-    public AlbumRecyclerViewAdapter(ArrayList<Disc> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView, Boolean flag) {
+    public AlbumRecyclerViewAdapter(ArrayList<SearchDiscResult> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView, Boolean flag) {
         this.discData = data;
         this.recyclerViewInterface = recyclerViewInterface;
         this.recyclerView = recyclerView;
@@ -50,10 +53,10 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Disc item = discData.get(position);
-        String releaseYear = discData.get(position).getReleaseDate();
+//        Disc disc = API.getDiscById(discData.get(position).getId());
+        String releaseYear = "";
         String artist = "By: " + discData.get(position).getBandName();
-        String album = item.toString().split("name=")[1].split("\\)")[0];
+        String album = discData.get(position).getName();
         if (flag == true) {
             holder.myTextView.setText(album);
             holder.myTextView2.setText(artist);

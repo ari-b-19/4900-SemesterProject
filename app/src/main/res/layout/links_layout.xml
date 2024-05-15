@@ -7,20 +7,11 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/textview5"
+        android:id="@+id/link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Member"
+        android:text="https://example.com"
+        android:autoLink="web"
         android:textSize="22sp" />
-
-    <TextView
-        android:id="@+id/textview6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Role"
-        android:textSize="16sp"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_gravity="center_horizontal"
-        android:maxLines="2"/>
 
 </LinearLayout>

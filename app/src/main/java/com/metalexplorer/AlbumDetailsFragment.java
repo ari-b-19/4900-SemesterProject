@@ -109,20 +109,6 @@ public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterf
         Disc disc = API.getDiscById(discId);
 
         trackList.addAll(disc.getTrackList());
-
-
-
-//        for (int i = 0; i < requireArguments().getIntegerArrayList("DISCOGRAPHY").size(); i ++) {
-//            Disc disc = API.getDiscById(requireArguments().getIntegerArrayList("DISCOGRAPHY").get(i));
-////            String name = disc.toString().split("name=")[1].split("\\)")[0];
-//            trackList.add(disc.getTrackList().get(i));
-//        }
-
-//        for (int j = 0; j < requireArguments().getStringArrayList("ROLES").size(); j ++) {
-////            String role = requireArguments().getStringArrayList("ROLES").get(j);
-//            roleTextView = trackRecyclerView.findViewById(R.id.textview6);
-//            roleTextView.setText(requireArguments().getStringArrayList("ROLES").get(j));
-//        }
     }
 
     @Override
