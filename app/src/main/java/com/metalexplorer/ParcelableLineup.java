@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.github.loki.afro.metallum.entity.Band;
-import com.github.loki.afro.metallum.entity.Disc;
-import com.github.loki.afro.metallum.entity.partials.PartialMember;
 
 import java.util.ArrayList;
 import java.util.List;

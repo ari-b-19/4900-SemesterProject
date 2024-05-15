@@ -18,12 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.loki.afro.metallum.entity.Disc;
-import com.github.loki.afro.metallum.entity.Member;
 import com.github.loki.afro.metallum.entity.Track;
 import com.github.loki.afro.metallum.search.API;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterface {
 

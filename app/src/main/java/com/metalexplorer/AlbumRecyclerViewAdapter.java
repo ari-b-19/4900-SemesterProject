@@ -1,8 +1,5 @@
 package com.metalexplorer;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.loki.afro.metallum.entity.Disc;
-import com.github.loki.afro.metallum.enums.DiscType;
+
 
 import java.util.ArrayList;
-import java.util.Optional;
+
 
 public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
 
@@ -31,7 +28,6 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
     private Boolean flag = false;
 
-    // Constructor for the adapter
     public AlbumRecyclerViewAdapter(ArrayList<Disc> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView) {
         this.discData = data;
         this.recyclerViewInterface = recyclerViewInterface;
@@ -45,7 +41,6 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         this.flag = flag;
     }
 
-    // Create new views (invoked by the layout manager)
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -53,22 +48,20 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         return new ViewHolder(view, recyclerViewInterface);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Disc item = discData.get(position);
-        DiscType discType = item.getType();
         String releaseYear = discData.get(position).getReleaseDate();
         String artist = "By: " + discData.get(position).getBandName();
         String album = item.toString().split("name=")[1].split("\\)")[0];
-//        if (flag == true) {
-//            holder.myTextView.setText(album);
-//            holder.myTextView2.setText(artist);
-//        } else if (flag == false) {
+        if (flag == true) {
+            holder.myTextView.setText(album);
+            holder.myTextView2.setText(artist);
+        } else if (flag == false) {
             holder.myTextView.setText(album);
             holder.myTextView2.setText(releaseYear);
-//            flag = false;
-//        }
+            flag = false;
+        }
     }
 
     @Override
@@ -76,7 +69,6 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         return discData.size();
     }
 
-    // Stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView myTextView;
         TextView myTextView2;
@@ -99,10 +91,7 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Get the position of the clicked item
-                    int clickedRecyclerViewId = v.getId();
-                    String clickedRecyclerViewTag = (String) v.getTag();
-                    Log.d("Tag", "Clicked RecyclerView tag: " + clickedRecyclerViewTag);
+
                     if (recyclerViewInterface != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {

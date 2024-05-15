@@ -91,9 +91,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchRecentReleases() {
-//        LayoutInflater inflater = getLayoutInflater();
-//        View layout = inflater.inflate(R.layout.fragment_home, null);
-//        textView = layout.findViewById(R.id.api);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080")
                 .addConverterFactory(GsonConverterFactory.create())

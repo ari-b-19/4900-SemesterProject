@@ -34,11 +34,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return new MyViewHolder(view, recyclerViewInterface);
     }
 
-    // Bind data to the views inside each item
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-//        Band item = bandData.get(position);
-//        String  =
         Optional<String> optionalGenre = bandData.get(position).getGenre();
         String empty = "No matches found";
 
@@ -62,15 +59,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
 
-    // Return the total number of items in the data set
     @Override
     public int getItemCount() {
 
         return bandData.size();
     }
-
-
-    // ViewHolder class to hold references to the views inside each item
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView band;
         TextView bandGenre;
@@ -79,11 +72,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super(itemView);
             band = itemView.findViewById(R.id.textview);
             bandGenre = itemView.findViewById(R.id.textview2);
-            // Set OnClickListener for the item view
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Get the position of the clicked item
                     if (recyclerViewInterface != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
@@ -96,10 +88,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             });
 
-//        public void bind(SearchBandResult bandName) {
-//
-//            textView.setText(bandName.getName());
-//        }
 
 
         }

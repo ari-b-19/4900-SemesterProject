@@ -54,8 +54,6 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 
     private AlbumRecyclerViewAdapter albumRecyclerViewAdapter;
 
-    private MemberRecyclerViewAdapter memberRecyclerViewAdapter;
-
     private ArrayList<SearchBandResult> itemList = new ArrayList<SearchBandResult>();
 
     private ArrayList<Disc> discList = new ArrayList<>();
@@ -142,10 +140,7 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
             executorService.execute(() -> {
             AlbumDetailsFragment albumDetailsFragment = new AlbumDetailsFragment();
             Bundle bundle = new Bundle();
-
-//            bundle.putString("TRACKS", itemList.get(position).getTrackList().toString());
             bundle.putString("ALBUM_NAME", discList.get(position).getName());
-//            bundle.putIntegerArrayList("TRACKS", getTracks(discList.get(position).getId()));
             bundle.putLong("ALBUM", discList.get(position).getId());
 
 
@@ -192,13 +187,6 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
                     }
                 }
 
-//                discList1.sort(new Comparator<Disc>() {
-//                    @Override
-//                    public int compare(Disc d1, Disc d2) {
-//                        return d1.getReleaseDate().compareTo(d2.getReleaseDate());
-//                    }
-//                });
-
             ParcelableDisc parcelableDisc = new ParcelableDisc(discList1);
 
             bundle.putParcelable("DISCOGRAPHY", parcelableDisc);
@@ -207,9 +195,6 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 
             bundle.putParcelable("LINEUP", parcelableLineup);
 
-//        bundle.putIntegerArrayList("LINEUP", memberIds);
-
-//        bundle.putIntegerArrayList("LINEUP", getMembers(itemList.get(position).getId()));
 
 
             Optional<byte[]> optionalPhoto = band.getLogo();
@@ -219,8 +204,7 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
                 bundle.putByteArray("IMAGE", photoBytes);
 
             } else {
-                // Handle the case where the photo is not present, maybe by putting a placeholder or null
-                bundle.putByteArray("IMAGE", (byte[]) null); // Or some placeholder byte array
+                bundle.putByteArray("IMAGE", (byte[]) null);
             }
 
             bandProfileFragment.setArguments(bundle);
@@ -246,25 +230,12 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 
     }
     public void searchResults(String query) {
-//        long id;
-//        searchService.execute(new Runnable() {
-//        @Override
-//
-//        public void run(){
-
-
-//        BandQuery band = BandQuery.byName(query, true);
-//        BandQuery bandName = BandQuery.builder()
-////                .name(query)
-////                .build();
         if (getCurrentSelection().equals("Artist")) {
 
             BandQuery bandName = BandQuery.byName(query, false);
             executorService.execute(() -> {
 
             for (SearchBandResult result : API.getBands(bandName)){
-//            setBandId(result.getId());
-//            Band band = API.getBandById(id);
                 itemList.add(result);
                 Log.d("Search", "Band: " + result.getName());
 
@@ -328,64 +299,13 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 
         }
 
-//        memberRecyclerViewAdapter = new MemberRecyclerViewAdapter(memberList);
-//        isAlbumRecyclerView = true;
-//        recyclerView.setAdapter(albumRecyclerViewAdapter);
-//        recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
-//
-//        albumRecyclerViewAdapter.notifyDataSetChanged();
-
 
     }
 
 
-
-//        }
-//        });
-
         }
 
 
-    public void setMembers(Long id) {
-        Band band = API.getBandById(id);
-//        members.addAll(band.getCurrentMembers());
-
-
-        for (Band.PartialMember memberResult : band.getCurrentMembers()) {
-//            String stringId = memberResult.toString().split("id=")[1].split(",")[0];
-//            int intId = Integer.parseInt(stringId);
-            Long intId = memberResult.getId();
-            memberIds.add(Math.toIntExact(intId));
-        }
-//        for (int i = 0; i < members.size(); i++) {
-//            String stringId = members.get(i).toString().split("id=")[1].split(",")[0];
-//            int intId = Integer.parseInt(stringId);
-//            memberIds.add(intId);
-//        }
-
-//        return memberIds;
-    }
-
-//    public ArrayList<String> getMemberRoles(Long id) {
-//        Band band = API.getBandById(id);
-//
-//        for (int j = 0; j < band.getCurrentMembers().size(); j++) {
-//            String role = band.getCurrentMembers().get(j).getRole();
-//            memberRoles.add(role);
-//        }
-//
-//        return memberRoles;
-//    }
-
-//    public long setBandId(long id) {
-//        this.id = id;
-//
-//        return this.id;
-//    }
-//
-//    public long getBandId() {
-//        return id;
-//    }
 
     public void setCurrentSelection(String currentSelection) {
         this.currentSelection = currentSelection;

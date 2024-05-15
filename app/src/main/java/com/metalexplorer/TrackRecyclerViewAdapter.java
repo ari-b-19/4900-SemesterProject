@@ -1,7 +1,6 @@
 package com.metalexplorer;
 
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,27 +9,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.loki.afro.metallum.entity.Disc;
 import com.github.loki.afro.metallum.entity.Track;
 
 import java.util.ArrayList;
 
 public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecyclerViewAdapter.ViewHolder> {
     private ArrayList<Track> mData;
-    private LayoutInflater mInflater;
 
     private final RecyclerViewInterface recyclerViewInterface;
 
     private RecyclerView recyclerView;
-
-    // Constructor for the adapter
     public TrackRecyclerViewAdapter(ArrayList<Track> data, RecyclerViewInterface recyclerViewInterface) {
         this.mData = data;
         this.recyclerViewInterface = recyclerViewInterface;
-//        this.recyclerView = recyclerView;
     }
 
-    // Create new views (invoked by the layout manager)
     @NonNull
     @Override
     public TrackRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -38,7 +31,6 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
         return new TrackRecyclerViewAdapter.ViewHolder(view, recyclerViewInterface);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(TrackRecyclerViewAdapter.ViewHolder holder, int position) {
         Track item = mData.get(position);
@@ -54,13 +46,11 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
 
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mData.size();
     }
 
-    // Stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView myTextView;
 

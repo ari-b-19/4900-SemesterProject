@@ -26,22 +26,15 @@ import java.util.Optional;
 public class HomeScreenRecyclerViewAdapter extends RecyclerView.Adapter<HomeScreenRecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<Disc> discData;
-    private LayoutInflater mInflater;
 
     private final RecyclerViewInterface recyclerViewInterface;
 
     private RecyclerView recyclerView;
-
-    private String albumData;
-
-    // Constructor for the adapter
     public HomeScreenRecyclerViewAdapter(ArrayList<Disc> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView) {
         this.discData = data;
         this.recyclerViewInterface = recyclerViewInterface;
         this.recyclerView = recyclerView;
     }
-
-    // Create new views (invoked by the layout manager)
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -49,7 +42,6 @@ public class HomeScreenRecyclerViewAdapter extends RecyclerView.Adapter<HomeScre
         return new ViewHolder(view, recyclerViewInterface);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Band band = API.getBandById(discData.get(position).getBand().getId());
@@ -86,15 +78,11 @@ public class HomeScreenRecyclerViewAdapter extends RecyclerView.Adapter<HomeScre
         discData.addAll(data);
         notifyDataSetChanged();
     }
-
-
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return discData.size();
     }
 
-    // Stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView band;
@@ -116,10 +104,6 @@ public class HomeScreenRecyclerViewAdapter extends RecyclerView.Adapter<HomeScre
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Get the position of the clicked item
-                    int clickedRecyclerViewId = v.getId();
-                    String clickedRecyclerViewTag = (String) v.getTag();
-                    Log.d("Tag", "Clicked RecyclerView tag: " + clickedRecyclerViewTag);
                     if (recyclerViewInterface != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
