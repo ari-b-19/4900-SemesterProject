@@ -8,5 +8,6 @@
     <string name="previous">Previous</string>
     <string name="search_hint">Search</string>
     <string name="select">Filter</string>
+    <string name="artist">Artist</string>
 
 </resources>

@@ -9,18 +9,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.loki.afro.metallum.entity.Band;
+import com.github.loki.afro.metallum.entity.Disc;
 import com.github.loki.afro.metallum.entity.Member;
 import com.github.loki.afro.metallum.search.API;
+import com.github.loki.afro.metallum.search.query.entity.SearchMemberResult;
 
 import java.util.ArrayList;
 
 public class MemberRecyclerViewAdapter extends RecyclerView.Adapter<MemberRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Member> mData;
+    private ArrayList<Band.PartialMember> mData;
     private LayoutInflater mInflater;
 
     // Constructor for the adapter
-    public MemberRecyclerViewAdapter(ArrayList<Member> data) {
+    public MemberRecyclerViewAdapter(ArrayList<Band.PartialMember> data) {
         this.mData = data;
     }
 
@@ -35,8 +37,9 @@ public class MemberRecyclerViewAdapter extends RecyclerView.Adapter<MemberRecycl
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Member item = mData.get(position);
-        holder.myTextView.setText(item.getName());
+//        Disc.PartialMember item = mData.get(position);
+        holder.myTextView.setText(mData.get(position).getName());
+        holder.myTextView2.setText(mData.get(position).getRole());
 
 //        Long partialMemberId = mData.get(position).getId();
 
@@ -56,7 +59,7 @@ public class MemberRecyclerViewAdapter extends RecyclerView.Adapter<MemberRecycl
         ViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.textview5);
-//            myTextView2 = itemView.findViewById(R.id.textview6);
+            myTextView2 = itemView.findViewById(R.id.textview6);
         }
     }
 }

@@ -1,5 +1,8 @@
 package com.metalexplorer;
 
+import static com.github.loki.afro.metallum.search.API.getBandById;
+import static com.github.loki.afro.metallum.search.API.getMemberByName;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,9 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -24,24 +26,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.loki.afro.metallum.entity.Band;
 import com.github.loki.afro.metallum.entity.Disc;
-import com.github.loki.afro.metallum.entity.Member;
-import com.github.loki.afro.metallum.entity.partials.PartialDisc;
-import com.github.loki.afro.metallum.entity.partials.PartialMember;
+import com.github.loki.afro.metallum.enums.DiscType;
 import com.github.loki.afro.metallum.search.API;
 import com.github.loki.afro.metallum.search.query.entity.BandQuery;
 import com.github.loki.afro.metallum.search.query.entity.DiscQuery;
 import com.github.loki.afro.metallum.search.query.entity.SearchBandResult;
-import com.github.loki.afro.metallum.search.query.entity.SearchDiscResult;
-import com.metalexplorer.databinding.FragmentSearchBinding;
+import com.github.loki.afro.metallum.search.query.entity.SearchMemberResult;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class SearchFragment extends Fragment implements RecyclerViewInterface {
+
+    private TextView defaultSearchResult;
+
+    private ProgressBar progressBar;
 
     private SearchView searchView;
 
@@ -53,47 +56,46 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 
     private MemberRecyclerViewAdapter memberRecyclerViewAdapter;
 
-    private ArrayList<Band> itemList = new ArrayList<>();
+    private ArrayList<SearchBandResult> itemList = new ArrayList<SearchBandResult>();
 
     private ArrayList<Disc> discList = new ArrayList<>();
 
-    private ArrayList<Member> memberList = new ArrayList<>();
+    private ArrayList<SearchMemberResult> memberList = new ArrayList<SearchMemberResult>();
 
     private ArrayAdapter<String> adapterDropdown;
 
-    private ExecutorService searchService;
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     private String[] dropdownSelections = {"Artist", "Album", "Member"};
 
     private AutoCompleteTextView autoCompleteTextView;
 
-    private String currentSelection;
+    private String currentSelection = "Artist";
 
-//    private ArrayList<PartialDisc> albums = new ArrayList<>();
-//
-//    private ArrayList<PartialMember> members = new ArrayList<>();
-//
-//    private ArrayList<String> memberRoles = new ArrayList<>();
-//
-//    private ArrayList<Integer> albumIds = new ArrayList<>();
+    private Boolean isAlbumRecyclerView = false;
+
+    private Boolean isBandRecyclerView = false;
 
     private ArrayList<Integer> memberIds = new ArrayList<>();
 
     private View view;
 
-    private long id;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        binding = FragmentSearchBinding.inflate(inflater, container, false);
         view = inflater.inflate(R.layout.fragment_search, container, false);
 
         autoCompleteTextView = view.findViewById(R.id.autocomplete_textview);
+        TextInputLayout textInputLayout = (TextInputLayout) view.findViewById(R.id.filter_box);
+        textInputLayout.setHint("Artist");
+
         searchView = view.findViewById(R.id.search_view);
         searchView.clearFocus();
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
+        defaultSearchResult = view.findViewById(R.id.defaultSearchResult);
+        progressBar = view.findViewById((R.id.progressBar2));
 
         adapterDropdown = new ArrayAdapter<String>(requireContext(), R.layout.selection_list, dropdownSelections);
 
@@ -103,22 +105,19 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String selection = adapterView.getItemAtPosition(position).toString();
-                Toast.makeText(requireContext(), "Selection: " + selection, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(requireContext(), "Selection: " + selection, Toast.LENGTH_SHORT).show();
+                textInputLayout.setHint(selection);
                 setCurrentSelection(selection);
             }
         });
 
-
-
-//        searchService = Executors.newSingleThreadExecutor();
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                itemList.clear();
+                progressBar.setVisibility(View.VISIBLE);
                 searchResults(query);
-
                 Log.d("SearchFragment", "Query made");
-
                 return true;
             }
 
@@ -128,10 +127,6 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
                 return false;
             }
         });
-
-//        itemAdapter = new RecyclerViewAdapter(itemList, this, recyclerView);
-//        recyclerView.setAdapter(itemAdapter);
-
 
         return view;
 
@@ -143,41 +138,112 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
     @Override
     public void OnItemClick(int position, RecyclerView recyclerView) {
 
+        if (isAlbumRecyclerView) {
+            executorService.execute(() -> {
+            AlbumDetailsFragment albumDetailsFragment = new AlbumDetailsFragment();
+            Bundle bundle = new Bundle();
 
-        BandProfileFragment bandProfileFragment = new BandProfileFragment();
-        Bundle bundle = new Bundle();
+//            bundle.putString("TRACKS", itemList.get(position).getTrackList().toString());
+            bundle.putString("ALBUM_NAME", discList.get(position).getName());
+//            bundle.putIntegerArrayList("TRACKS", getTracks(discList.get(position).getId()));
+            bundle.putLong("ALBUM", discList.get(position).getId());
 
-        ParcelableDisc parcelableDisc = new ParcelableDisc(itemList.get(position).getDiscs());
 
-        bundle.putParcelable("DISCOGRAPHY", parcelableDisc);
+            Optional<byte[]> optionalPhoto = discList.get(position).getArtwork();
 
+            if (optionalPhoto.isPresent()) {
+                byte[] photoBytes = optionalPhoto.get();
+                bundle.putByteArray("ALBUM_ART", photoBytes);
+            } else {
+                // Handle the case where the photo is not present
+                bundle.putByteArray("ALBUM_ART", (byte[]) null);
+            }
+
+            albumDetailsFragment.setArguments(bundle);
+
+            FragmentManager fragmentManager = getParentFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, albumDetailsFragment);
+            fragmentTransaction.setReorderingAllowed(true);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+
+            isAlbumRecyclerView = false;
+
+            Log.d("ItemClick", "Item clicked at position: " + position);
+
+            });
+
+        } else if (isBandRecyclerView) {
+            executorService.execute(() -> {
+            BandProfileFragment bandProfileFragment = new BandProfileFragment();
+            Bundle bundle = new Bundle();
+            List<Disc> discList1 = new ArrayList<>();
+            Band band = getBandById(itemList.get(position).getId());
+
+            DiscQuery query = DiscQuery.builder()
+                    .discType(DiscType.FULL_LENGTH)
+                    .bandName(itemList.get(position).getName())
+                    .build();
+
+                for (Disc discResult : API.getDiscsFully(query)) {
+                    if (discResult.getBand().getId() == itemList.get(position).getId()) {
+                        discList1.add(discResult);
+                    }
+                }
+
+//                discList1.sort(new Comparator<Disc>() {
+//                    @Override
+//                    public int compare(Disc d1, Disc d2) {
+//                        return d1.getReleaseDate().compareTo(d2.getReleaseDate());
+//                    }
+//                });
+
+            ParcelableDisc parcelableDisc = new ParcelableDisc(discList1);
+
+            bundle.putParcelable("DISCOGRAPHY", parcelableDisc);
+
+            ParcelableLineup parcelableLineup = new ParcelableLineup(band.getCurrentMembers());
+
+            bundle.putParcelable("LINEUP", parcelableLineup);
 
 //        bundle.putIntegerArrayList("LINEUP", memberIds);
 
-//        bundle.putIntegerArrayList("DISCOGRAPHY", getAlbums(itemList.get(position).getId()));
-
 //        bundle.putIntegerArrayList("LINEUP", getMembers(itemList.get(position).getId()));
 
-                Optional<byte[]> optionalPhoto = itemList.get(position).getLogo();
 
-                if (optionalPhoto.isPresent()) {
-                    byte[] photoBytes = optionalPhoto.get();
-                    bundle.putByteArray("IMAGE", photoBytes);
-                } else {
-                    // Handle the case where the photo is not present, maybe by putting a placeholder or null
-                    bundle.putByteArray("IMAGE", (byte[]) null); // Or some placeholder byte array
-                }
+            Optional<byte[]> optionalPhoto = band.getLogo();
 
-                bandProfileFragment.setArguments(bundle);
+            if (optionalPhoto.isPresent()) {
+                byte[] photoBytes = optionalPhoto.get();
+                bundle.putByteArray("IMAGE", photoBytes);
 
-                FragmentManager fragmentManager = getParentFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, bandProfileFragment);
-                fragmentTransaction.setReorderingAllowed(true);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+            } else {
+                // Handle the case where the photo is not present, maybe by putting a placeholder or null
+                bundle.putByteArray("IMAGE", (byte[]) null); // Or some placeholder byte array
+            }
 
-                Log.d("ItemClick", "Item clicked at position: " + position);
+            bandProfileFragment.setArguments(bundle);
+
+            FragmentManager fragmentManager = getParentFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, bandProfileFragment);
+            fragmentTransaction.setReorderingAllowed(true);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+
+            isBandRecyclerView = false;
+
+            Log.d("ItemClick", "Item clicked at position: " + position);
+
+            });
+
+            autoCompleteTextView.setText("");
+
+        }
+
+
+
     }
     public void searchResults(String query) {
 //        long id;
@@ -186,7 +252,7 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 //
 //        public void run(){
 
-        itemList.clear();
+
 //        BandQuery band = BandQuery.byName(query, true);
 //        BandQuery bandName = BandQuery.builder()
 ////                .name(query)
@@ -194,17 +260,37 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
         if (getCurrentSelection().equals("Artist")) {
 
             BandQuery bandName = BandQuery.byName(query, false);
+            executorService.execute(() -> {
 
-            for (Band result : API.getBandsFully(bandName)){
+            for (SearchBandResult result : API.getBands(bandName)){
 //            setBandId(result.getId());
 //            Band band = API.getBandById(id);
                 itemList.add(result);
+                Log.d("Search", "Band: " + result.getName());
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
+                recyclerView.post(() -> {
+
+            progressBar.setVisibility(View.GONE);
             itemAdapter = new RecyclerViewAdapter(itemList, this, recyclerView);
+            isBandRecyclerView = true;
             recyclerView.setAdapter(itemAdapter);
             recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
             itemAdapter.notifyDataSetChanged();
+
+                    if (itemAdapter.getItemCount() == 0) {
+                        defaultSearchResult.setVisibility(TextView.VISIBLE);
+                    } else {
+                        defaultSearchResult.setVisibility(TextView.GONE);
+                    }
+                });
+            });
 
         } else if (getCurrentSelection().equals("Album")) {
 
@@ -212,21 +298,45 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
                     .name(query)
                     .build();
 
+            executorService.execute(() -> {
+
             for (Disc result : API.getDiscsFully(discName)) {
-//            setBandId(result.getId());
-//            Band band = API.getBandById(id);
                 discList.add(result);
+                Log.d("Search", "Album: " + result.getName());
             }
 
+                recyclerView.post(() -> {
+
+            progressBar.setVisibility(View.GONE);
             albumRecyclerViewAdapter = new AlbumRecyclerViewAdapter(discList, this, recyclerView);
-            albumRecyclerViewAdapter.isFromSearchFragment(true);
+            isAlbumRecyclerView = true;
             recyclerView.setAdapter(albumRecyclerViewAdapter);
-            recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+            recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
             albumRecyclerViewAdapter.notifyDataSetChanged();
 
+                });
+            });
+
+//
+        } else if (getCurrentSelection().equals("Member")) {
+
+
+        for (SearchMemberResult result : getMemberByName(query)) {
+            result.getId();
+            memberList.add(result);
 
         }
+
+//        memberRecyclerViewAdapter = new MemberRecyclerViewAdapter(memberList);
+//        isAlbumRecyclerView = true;
+//        recyclerView.setAdapter(albumRecyclerViewAdapter);
+//        recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
+//
+//        albumRecyclerViewAdapter.notifyDataSetChanged();
+
+
+    }
 
 
 
@@ -278,11 +388,7 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 //    }
 
     public void setCurrentSelection(String currentSelection) {
-        if (currentSelection == null) {
-            this.currentSelection = "Artist";
-        } else {
-            this.currentSelection = currentSelection;
-        }
+        this.currentSelection = currentSelection;
     }
 
     public String getCurrentSelection() {

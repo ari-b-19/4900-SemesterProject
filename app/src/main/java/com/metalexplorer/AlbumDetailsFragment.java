@@ -81,7 +81,7 @@ public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterf
             // Convert the byte array to a Bitmap
             Bitmap bitmap = BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length);
             int newWidth = 295;
-            int newHeight = 225;
+            int newHeight = 235;
             Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
 
             // Set the Bitmap to the ImageView

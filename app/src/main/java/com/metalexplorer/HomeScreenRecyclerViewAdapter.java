@@ -12,13 +12,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.loki.afro.metallum.entity.Band;
 import com.github.loki.afro.metallum.entity.Disc;
 import com.github.loki.afro.metallum.enums.DiscType;
+import com.github.loki.afro.metallum.search.API;
+import com.github.loki.afro.metallum.search.query.entity.SearchBandResult;
+import com.github.loki.afro.metallum.search.query.entity.SearchDiscResult;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
+public class HomeScreenRecyclerViewAdapter extends RecyclerView.Adapter<HomeScreenRecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<Disc> discData;
     private LayoutInflater mInflater;
@@ -29,48 +34,61 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
     private String albumData;
 
-    private Boolean flag = false;
-
     // Constructor for the adapter
-    public AlbumRecyclerViewAdapter(ArrayList<Disc> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView) {
+    public HomeScreenRecyclerViewAdapter(ArrayList<Disc> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView) {
         this.discData = data;
         this.recyclerViewInterface = recyclerViewInterface;
         this.recyclerView = recyclerView;
-    }
-
-    public AlbumRecyclerViewAdapter(ArrayList<Disc> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView, Boolean flag) {
-        this.discData = data;
-        this.recyclerViewInterface = recyclerViewInterface;
-        this.recyclerView = recyclerView;
-        this.flag = flag;
     }
 
     // Create new views (invoked by the layout manager)
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.albums_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recent_releases_layout, parent, false);
         return new ViewHolder(view, recyclerViewInterface);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Disc item = discData.get(position);
-        DiscType discType = item.getType();
-        String releaseYear = discData.get(position).getReleaseDate();
-        String artist = "By: " + discData.get(position).getBandName();
-        String album = item.toString().split("name=")[1].split("\\)")[0];
-//        if (flag == true) {
-//            holder.myTextView.setText(album);
-//            holder.myTextView2.setText(artist);
-//        } else if (flag == false) {
-            holder.myTextView.setText(album);
-            holder.myTextView2.setText(releaseYear);
-//            flag = false;
+        Band band = API.getBandById(discData.get(position).getBand().getId());
+        String forFansOf = "For fans of: " + band.getSimilarArtists();
+        setupAlbumArt(holder, position);
+        holder.band.setText(band.getName());
+        holder.genre.setText(band.getGenre());
+        holder.similarArtists.setText(forFansOf);
 //        }
     }
 
+    public void setupAlbumArt(ViewHolder holder, int position) {
+        Optional<byte[]> optionalPhoto = discData.get(position).getArtwork();
+
+
+        if (optionalPhoto.isPresent()) {
+            // Unwrap optional value
+            byte[] photoBytes = optionalPhoto.get();
+
+            // Decode byte array into Bitmap
+            Bitmap bitmap = BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length);
+            int newWidth = 295;
+            int newHeight = 235;
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+
+            // Set Bitmap to ImageView
+            holder.albumArt.setImageBitmap(scaledBitmap);
+        }
+
+    }
+
+    public void setData(List<Disc> data) {
+        discData.clear();
+        discData.addAll(data);
+        notifyDataSetChanged();
+    }
+
+
+    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return discData.size();
@@ -78,21 +96,20 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
     // Stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView myTextView;
-        TextView myTextView2;
 
         TextView band;
 
         TextView genre;
 
+        TextView similarArtists;
+
         ImageView albumArt;
 
         ViewHolder(View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.textview3);
-            myTextView2 = itemView.findViewById(R.id.textview4);
             band = itemView.findViewById(R.id.Band);
             genre = itemView.findViewById(R.id.Genre);
+            similarArtists = itemView.findViewById(R.id.similarArtists);
             albumArt = itemView.findViewById(R.id.AlbumArt);
 
 
