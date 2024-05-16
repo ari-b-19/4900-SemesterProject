@@ -142,29 +142,29 @@ public class MemberFragment extends Fragment implements RecyclerViewInterface {
         }
     }
 
-    public void setupLinksRecyclerView() {
-        if (!links.isEmpty()) {
-            links.clear();
-        }
-        RecyclerView bandLinksRecyclerView = view.findViewById(R.id.linksRecyclerView);
-        bandLinksRecyclerView.setHasFixedSize(true);
-        bandLinksRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-
-        BandLinksRecyclerViewAdapter linksAdapter = new BandLinksRecyclerViewAdapter(links);
-        bandLinksRecyclerView.setAdapter(linksAdapter);
-
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            ParcelableLink parcelableLink = bundle.getParcelable("LINKS");
-
-            if (parcelableLink != null) {
-                List<Link> bandLinks = parcelableLink.getLinks();
-
-                links.addAll(bandLinks);
-
-            }
-        }
-    }
+//    public void setupLinksRecyclerView() {
+//        if (!links.isEmpty()) {
+//            links.clear();
+//        }
+//        RecyclerView bandLinksRecyclerView = view.findViewById(R.id.linksRecyclerView);
+//        bandLinksRecyclerView.setHasFixedSize(true);
+//        bandLinksRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+//
+//        BandLinksRecyclerViewAdapter linksAdapter = new BandLinksRecyclerViewAdapter(links);
+//        bandLinksRecyclerView.setAdapter(linksAdapter);
+//
+//        Bundle bundle = getArguments();
+//        if (bundle != null) {
+//            ParcelableLink parcelableLink = bundle.getParcelable("LINKS");
+//
+//            if (parcelableLink != null) {
+//                List<Link> bandLinks = parcelableLink.getLinks();
+//
+//                links.addAll(bandLinks);
+//
+//            }
+//        }
+//    }
     @Override
     public void OnItemClick(int position, RecyclerView recyclerView) {
 

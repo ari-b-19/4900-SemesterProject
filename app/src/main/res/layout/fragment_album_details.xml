@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context="BandProfileFragment">-->
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/darker_gray"
+    tools:context="BandProfileFragment">
+
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="BandProfileFragment">
@@ -25,52 +24,89 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/albumArtView" />
 
+
+    <TextView
+        android:id="@+id/albumDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/AlbumHeader"
+        app:layout_constraintBottom_toTopOf="@id/SongsHeader"/>
+
     <ImageView
         android:id="@+id/albumArtView"
-        android:layout_width="295dp"
-        android:layout_height="225dp"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.024"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/placeholder_image" />
 
     <TextView
         android:id="@+id/SongsHeader"
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="20dp"
         android:text="Songs"
         android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:background="@color/cardview_dark_background"
+        android:gravity="center_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.075"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/AlbumHeader" />
+        app:layout_constraintTop_toBottomOf="@+id/albumDate"
+        app:layout_constraintBottom_toTopOf="@id/tracksRecyclerView" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tracksRecyclerView"
-        android:layout_width="234dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/Lineup"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SongsHeader"/>
+        app:layout_constraintTop_toBottomOf="@+id/SongsHeader" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/Tracks"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="88dp"-->
-<!--        android:text="Tracks"-->
-<!--        android:textSize="18sp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.044"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/AlbumHeader" />-->
+    <TextView
+        android:id="@+id/Lineup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/cardview_dark_background"
+        android:gravity="center_horizontal"
+        android:text="Lineup"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/albumLineupRecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tracksRecyclerView" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/albumLineupRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Lineup" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--</androidx.core.widget.NestedScrollView>-->
+</androidx.core.widget.NestedScrollView>

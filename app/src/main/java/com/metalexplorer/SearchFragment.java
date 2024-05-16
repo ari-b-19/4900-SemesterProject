@@ -41,8 +41,12 @@ import com.github.loki.afro.metallum.search.query.entity.SearchTrackResult;
 import com.github.loki.afro.metallum.search.query.entity.TrackQuery;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,9 +69,9 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 
     private MemberRecyclerViewAdapter memberRecyclerViewAdapter;
 
-    private ArrayList<SearchBandResult> itemList = new ArrayList<SearchBandResult>();
+    private ArrayList<SearchBandResult> itemList = new ArrayList<>();
 
-    private ArrayList<SearchDiscResult> discList = new ArrayList<SearchDiscResult>();
+    private ArrayList<SearchDiscResult> discList = new ArrayList<>();
 
     private ArrayList<Band.PartialMember> memberList = new ArrayList<>();
 
@@ -77,7 +81,7 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
-    private String[] dropdownSelections = {"Band", "Album", "Member", "Song"};
+    private String[] dropdownSelections = {"Band", "Album", "Song"};
 
     private AutoCompleteTextView autoCompleteTextView;
 
@@ -96,6 +100,8 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
     private Band band;
 
     private View view;
+
+    private String releaseDate;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -163,6 +169,25 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
             bundle.putLong("ALBUM", discList.get(position).getId());
 
 
+//                String releaseYear = discList.get(position).getReleaseDate().orElseGet(() -> "No release date available.");
+//                String dateInWords;
+//                if (releaseYear.contains("-00")) {
+//                    dateInWords = releaseYear.substring(0, 4);
+//                    bundle.putString("RELEASE_DATE", dateInWords);
+//                } else {
+//                    LocalDate date = LocalDate.parse(releaseYear);
+//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
+//                    dateInWords = formatter.format(date);
+//                    bundle.putString("RELEASE_DATE", dateInWords);
+//                }
+
+                bundle.putString("RELEASE_DATE", disc.getReleaseDate());
+
+                ParcelableLineupDisc parcelableLineupDisc = new ParcelableLineupDisc(disc.getLineup());
+
+                bundle.putParcelable("LINEUP", parcelableLineupDisc);
+
+
             Optional<byte[]> optionalPhoto = disc.getArtwork();
 
             if (optionalPhoto.isPresent()) {
@@ -196,10 +221,14 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
             Bundle bundle = new Bundle();
             List<SearchDiscResult> discList1 = new ArrayList<>();
             band = getBandById(itemList.get(position).getId());
+            int beginDate = band.getYearFormedIn();
+            int currentYear = Year.now().getValue();
 
             DiscQuery query = DiscQuery.builder()
                     .discType(DiscType.FULL_LENGTH)
                     .bandName(itemList.get(position).getName())
+                    .fromYear(beginDate)
+                    .toYear(currentYear)
                     .build();
 
                 for (SearchDiscResult discResult : API.getDiscs(query)) {
@@ -220,6 +249,14 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
 
             bundle.putParcelable("LINKS", parcelableLinks);
 
+            bundle.putString("FORMED", String.valueOf(band.getYearFormedIn()));
+
+            bundle.putString("COUNTRY", band.getCountry().getFullName());
+
+            bundle.putString("GENRE", itemList.get(position).getGenre().orElse(""));
+
+            bundle.putLong("ID", itemList.get(position).getId());
+
 
 
             Optional<byte[]> optionalPhoto = band.getLogo();
@@ -231,6 +268,16 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
             } else {
                 bundle.putByteArray("IMAGE", (byte[]) null);
             }
+
+                Optional<byte[]> optionalPhoto2 = band.getPhoto();
+
+                if (optionalPhoto2.isPresent()) {
+                    byte[] photoBytes2 = optionalPhoto2.get();
+                    bundle.putByteArray("BAND_PHOTO", photoBytes2);
+
+                } else {
+                    bundle.putByteArray("BAND_PHOTO", (byte[]) null);
+                }
 
             bandProfileFragment.setArguments(bundle);
 
@@ -254,6 +301,13 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
               Bundle bundle = new Bundle();
               bundle.putString("ALBUM_NAME", trackResult.get(position).getDiscName());
               bundle.putLong("ALBUM", trackResult.get(position).getDiscId());
+              disc = getDiscById(trackResult.get(position).getDiscId());
+
+              ParcelableLineupDisc parcelableLineupDisc = new ParcelableLineupDisc(disc.getLineup());
+
+              bundle.putParcelable("LINEUP", parcelableLineupDisc);
+
+              bundle.putString("RELEASE_DATE", getDiscById(trackResult.get(position).getDiscId()).getReleaseDate());
 
 
                     Optional<byte[]> optionalPhoto = getDiscById(trackResult.get(position).getDiscId()).getArtwork();
@@ -377,7 +431,7 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
                     recyclerView.post(() -> {
 
                         progressBar.setVisibility(View.GONE);
-                        albumRecyclerViewAdapter = new AlbumRecyclerViewAdapter(discList, this, recyclerView);
+                        albumRecyclerViewAdapter = new AlbumRecyclerViewAdapter(discList, this, recyclerView, true);
                         isAlbumRecyclerView = true;
                         recyclerView.setAdapter(albumRecyclerViewAdapter);
                         recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
@@ -469,6 +523,5 @@ public class SearchFragment extends Fragment implements RecyclerViewInterface {
         super.onDestroyView();
         view = null;
     }
-
 
 }

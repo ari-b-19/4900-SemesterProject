@@ -1,6 +1,10 @@
 package com.metalexplorer;
 
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +38,15 @@ public class TrackRecyclerViewAdapter extends RecyclerView.Adapter<TrackRecycler
     @Override
     public void onBindViewHolder(TrackRecyclerViewAdapter.ViewHolder holder, int position) {
 //        Track item = trackData.get(position);
+
         int trackNumber = trackData.get(position).getTrackNumber();
         String trackName = trackNumber + ". " + trackData.get(position).toString().split("name=")[1].split("\\)")[0];
+        SpannableString spannableString = new SpannableString(trackName);
+        int start = 0;
+        int end = trackName.length();
+        spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#800080")), start, end, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (!trackData.get(position).isInstrumental()) {
-        holder.myTextView.setText(trackName);
+        holder.myTextView.setText(spannableString);
         holder.myTextView.setPaintFlags(holder.myTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         } else {
             holder.myTextView.setText(trackName);

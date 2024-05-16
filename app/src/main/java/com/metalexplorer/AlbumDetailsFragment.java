@@ -14,21 +14,24 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.loki.afro.metallum.entity.Band;
 import com.github.loki.afro.metallum.entity.Disc;
 import com.github.loki.afro.metallum.entity.Track;
 import com.github.loki.afro.metallum.search.API;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterface {
 
 
     private View view;
 
-    private TextView tracks;
+    private TextView date;
     private TextView albumName;
 
 
@@ -40,6 +43,8 @@ public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterf
 
     private ImageView albumArtView;
 
+    private ArrayList<Disc.PartialMember> discMembers = new ArrayList<>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +53,9 @@ public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterf
 //        tracks = view.findViewById(R.id.Tracks);
         albumName = view.findViewById(R.id.AlbumHeader);
         albumArtView = view.findViewById(R.id.albumArtView);
+        date = view.findViewById(R.id.albumDate);
+
+        date.setText(requireArguments().getString("RELEASE_DATE"));
 
 //        tracks.setText(requireArguments().getStringArrayList("TRACKS").toString());
 
@@ -55,6 +63,7 @@ public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterf
 
         setupAlbumArt();
         setupTracksRecyclerView();
+        setupLineupRecyclerView();
 
         return view;
     }
@@ -83,7 +92,7 @@ public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterf
             Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
 
             // Set the Bitmap to the ImageView
-            albumArtView.setImageBitmap(scaledBitmap);
+            albumArtView.setImageBitmap(bitmap);
         } else {
             // Handle the case where the photo is not present, maybe by setting a default image
             albumArtView.setImageResource(R.drawable.default_band_image);
@@ -91,6 +100,31 @@ public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterf
         }
 
 
+    }
+
+    public void setupLineupRecyclerView() {
+        if (!discMembers.isEmpty()) {
+            discMembers.clear();
+        }
+        RecyclerView memberRecyclerView = view.findViewById(R.id.albumLineupRecyclerView);
+        memberRecyclerView.setHasFixedSize(true);
+        memberRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
+        MemberRecyclerViewAdapter memberAdapter = new MemberRecyclerViewAdapter(this, discMembers, memberRecyclerView, true);
+        memberRecyclerView.setAdapter(memberAdapter);
+        memberRecyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            ParcelableLineupDisc parcelableLineup = bundle.getParcelable("LINEUP");
+
+            if (parcelableLineup != null) {
+                List<Disc.PartialMember> members = parcelableLineup.getlineup();
+
+                discMembers.addAll(members);
+
+            }
+        }
     }
 
     public void setupTracksRecyclerView() {
@@ -121,7 +155,7 @@ public class AlbumDetailsFragment extends Fragment implements RecyclerViewInterf
             if (trackList.get(position).isInstrumental()) {
                 bundle.putString("LYRICS", "Instrumental");
         } else {
-                bundle.putString("LYRICS", trackList.get(position).getLyrics().toString());
+                bundle.putString("LYRICS", trackList.get(position).getLyrics().orElse("No lyrics available yet."));
             }
 //            bundle.putString("LYRICS", trackList.get(position).getLyrics().toString());
             bundle.putString("BAND_NAME", trackList.get(position).getBandName());

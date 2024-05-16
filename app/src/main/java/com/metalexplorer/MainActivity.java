@@ -2,6 +2,8 @@ package com.metalexplorer;
 
 import static android.content.Intent.getIntent;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,18 +48,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
     private final LocalDate today = LocalDate.now();
 
     private ArrayList<Disc> todaysReleases = new ArrayList<>();
 
-    private TextView textView;
-
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private DataViewModel dataViewModel;
+
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(binding.getRoot());
         dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
+        prefs = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 //        fetchRecentReleases();
 
 

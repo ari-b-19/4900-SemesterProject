@@ -13,14 +13,16 @@ public class SavedFragment extends Fragment {
 
     private FragmentSavedBinding binding;
 
+    private View view;
+
 
 
     //   private List<String> itemList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentSavedBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        view = inflater.inflate(R.layout.fragment_band_profile, container, false);
+        return view;
 
     }
 

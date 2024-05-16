@@ -27,9 +27,10 @@ public class LyricsFragment extends Fragment {
 
         TextView byline = view.findViewById(R.id.byline);
 
-        lyrics.setText(getArguments().get("LYRICS").toString());
-        trackName.setText(getArguments().get("TRACK_NAME").toString());
-        byline.setText(getArguments().get("BAND_NAME").toString());
+        assert getArguments() != null;
+        trackName.setText(getArguments().getString("TRACK_NAME"));
+        byline.setText(getArguments().getString("BAND_NAME"));
+        lyrics.setText(getArguments().getString("LYRICS"));
 
 
 

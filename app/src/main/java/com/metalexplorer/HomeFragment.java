@@ -20,8 +20,10 @@ import com.github.loki.afro.metallum.entity.Disc;
 import com.github.loki.afro.metallum.entity.Track;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +44,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
     private ArrayList<Disc> todaysReleases = new ArrayList<>();
 
-    private LocalDate today;
+    private final LocalDate today = LocalDate.now();
+
+    private TextView date;
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -55,6 +59,8 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
 
         dataViewModel = new ViewModelProvider(requireActivity()).get(DataViewModel.class);
+        date = view.findViewById(R.id.todaysDate);
+        date.setText(today.toString());
 
         fetchText = view.findViewById(R.id.fetching);
         progressBar = view.findViewById(R.id.progressBarHome);
@@ -63,13 +69,13 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-        fetchText.setVisibility(View.GONE);
-        progressBar.setVisibility(View.GONE);
         homeScreenRecyclerViewAdapter = new HomeScreenRecyclerViewAdapter(todaysReleases, this, recyclerView);
         recyclerView.setAdapter(homeScreenRecyclerViewAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         dataViewModel.getDataList().observe(getViewLifecycleOwner(), data -> {
             // Update RecyclerView with new data
+            fetchText.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
            homeScreenRecyclerViewAdapter.setData(data);
            recyclerView.setVisibility(View.VISIBLE);
         });
@@ -106,6 +112,9 @@ public class HomeFragment extends Fragment implements RecyclerViewInterface {
 
         bundle.putString("ALBUM_NAME", todaysReleases.get(position).getName());
         bundle.putLong("ALBUM", todaysReleases.get(position).getId());
+
+        bundle.putString("RELEASE_DATE", todaysReleases.get(position).getReleaseDate());
+
 
 
         Optional<byte[]> optionalPhoto = todaysReleases.get(position).getArtwork();

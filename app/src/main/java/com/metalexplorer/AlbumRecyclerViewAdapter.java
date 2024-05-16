@@ -14,7 +14,10 @@ import com.github.loki.afro.metallum.search.API;
 import com.github.loki.afro.metallum.search.query.entity.SearchDiscResult;
 
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -29,12 +32,15 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
 
     private String albumData;
 
+    private String releaseDate;
+
     private Boolean flag = false;
 
     public AlbumRecyclerViewAdapter(ArrayList<SearchDiscResult> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView) {
         this.discData = data;
         this.recyclerViewInterface = recyclerViewInterface;
         this.recyclerView = recyclerView;
+        this.releaseDate = releaseDate;
     }
 
     public AlbumRecyclerViewAdapter(ArrayList<SearchDiscResult> data, RecyclerViewInterface recyclerViewInterface, RecyclerView recyclerView, Boolean flag) {
@@ -54,15 +60,26 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 //        Disc disc = API.getDiscById(discData.get(position).getId());
-        String releaseYear = "";
+
+
+        // Format the date into words
         String artist = "By: " + discData.get(position).getBandName();
         String album = discData.get(position).getName();
         if (flag == true) {
             holder.myTextView.setText(album);
             holder.myTextView2.setText(artist);
         } else if (flag == false) {
+            String releaseYear = discData.get(position).getReleaseDate().orElseGet(() -> "No release date available.");
+            String dateInWords;
+            if (releaseYear.contains("-00")) {
+                dateInWords = releaseYear.substring(0, 4);
+            } else {
+                LocalDate date = LocalDate.parse(releaseYear);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
+                dateInWords = formatter.format(date);
+            }
             holder.myTextView.setText(album);
-            holder.myTextView2.setText(releaseYear);
+            holder.myTextView2.setText(dateInWords);
             flag = false;
         }
     }
@@ -71,6 +88,7 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
     public int getItemCount() {
         return discData.size();
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView myTextView;
