@@ -1,1 +1,1 @@
-# 4900-SemesterProject (Metal Archives Android app)
+# 4900-CapstoneProject (Metal Archives Android app)
